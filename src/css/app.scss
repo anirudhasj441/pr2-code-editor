@@ -1,0 +1,12 @@
+// app global css in SCSS form
+
+.bg-main {
+    background-color: #1f1f1f;
+}
+
+.tab-active {
+    background-color: #262922;
+    .q-tab__indicator {
+        background: transparent;
+    }
+}
