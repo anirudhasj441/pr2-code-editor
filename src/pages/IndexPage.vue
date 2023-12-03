@@ -1,16 +1,16 @@
 <template>
-    <q-page class="" :style-fn="pageStyleStore.setStyle">
-        <div class="fit flex column">
-            <q-tabs v-model="editorTab" dense class="bg-main text-white" no-caps align="left" active-class="tab-active"
+    <q-page :style-fn="pageStyleStore.setStyle">
+        <div class="fit flex bg-main">
+            <q-tabs v-model="editorTab" dense class="text-white" no-caps align="left" active-class="tab-active"
                 indicator-color="none" breakpoint="0">
-                <q-tab name="main.py" :disable="editorTab == 'main.js'">
-                    <div class="flex items-center">
+                <q-tab name="main.py" class="q-px-sm">
+                    <div class="flex items-center q-gutter-x-sm">
                         <div>main.js</div>
-                        <q-btn dense flat icon="cancel"></q-btn>
+                        <q-btn dense flat icon="close" size="sm"></q-btn>
                     </div>
                 </q-tab>
             </q-tabs>
-            <div class="col-grow">
+            <div class="col-grow full-width">
                 <code-editor></code-editor>
             </div>
         </div>
@@ -28,7 +28,7 @@ export default defineComponent({
     },
     data() {
         return {
-            editorTab: '',
+            editorTab: 'main.js',
             pageStyleStore: pageStyleStore()
         }
     }

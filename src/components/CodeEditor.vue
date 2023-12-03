@@ -19,6 +19,9 @@ export default {
                 language: 'javascript',
                 theme: 'vs-dark',
                 automaticLayout: true,
+                scrollbar: {
+                    useShadows: false
+                }
                 // minimap: {
                 //     enabled: true,
                 // },

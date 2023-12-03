@@ -1,7 +1,11 @@
 // app global css in SCSS form
 
 .bg-main {
-    background-color: #1f1f1f;
+    background-color: #1f1f1f !important;
+}
+
+.bg-editor {
+    background-color: #262922;
 }
 
 .tab-active {
@@ -9,4 +13,8 @@
     .q-tab__indicator {
         background: transparent;
     }
+}
+
+.q-tree__node--selected {
+    background-color: #262922 !important;
 }
