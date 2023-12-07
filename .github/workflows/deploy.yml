@@ -18,12 +18,12 @@ jobs:
             - run: npm install -g @quasar/cli
             - run: npm install
             - run: rm -rf dist/*
-            - run: quasar build -m pwa
+            - run: quasar build
             - name: rsync deployments
               uses: burnett01/rsync-deployments@6.0.0
               with:
                   switches: -avzP --delete
-                  path: dist/pwa/*
+                  path: dist/spa/*
                   remote_path: /home/devil/code-editor
                   remote_host: ${{ secrets.DEPLOY_SERVER_HOST }}
                   remote_user: ${{ secrets.DEPLOY_USER }}
