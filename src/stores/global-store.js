@@ -19,7 +19,6 @@ export const editorStore = defineStore('editor', {
     state: () => ({
         editor: null,
         theme: 'monokai',
-
     }),
     actions: {
         async setTheme(editor, theme) {
@@ -32,4 +31,27 @@ export const editorStore = defineStore('editor', {
         }
     }
 
+})
+
+export const tabStore = defineStore('tab', {
+    state: () => ({
+        openTabs: [],
+        activeTab: null
+    }),
+    getters: {
+        getOpenTabs: (state) => (state.openTabs),
+        getActiveTab: (state) => (state.activeTab)
+    },
+    actions: {
+        openTab(node) {
+            let tab = {
+                path: node.path,
+                label: node.label
+            }
+            if (!this.openTabs.includes(tab)) {
+                this.openTabs.push(tab)
+            }
+            this.activeTab = node;
+        }
+    }
 })

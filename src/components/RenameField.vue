@@ -1,10 +1,12 @@
 <template>
     <div class="fit q-ma-none z-top">
-        <q-input v-if="showInput" dense outlined v-model="fileName">
-            <template v-slot:append>
-                <q-btn dense flat icon="close" @click.stop="$emit('onClose')"></q-btn>
-            </template>
-        </q-input>
+        <q-form @submit="renameFile">
+            <q-input dense outlined v-model="fileName">
+                <template v-slot:append>
+                    <q-btn dense flat icon="close" @click.stop="$emit('onClose')"></q-btn>
+                </template>
+            </q-input>
+        </q-form>
     </div>
 </template>
 
@@ -14,23 +16,44 @@ export default {
         path: {
             type: String,
             required: true,
-        },
-        show: {
-            type: Boolean,
-            default: true,
-        },
+        }
     },
     data() {
-        return {};
+        return {
+            fileName: '',
+        };
+    },
+    methods: {
+        renameFile() {
+            let url = '/api/rename_file';
+            let pathList = this.path.split('/');
+            console.log("fileName: ", this.fileName);
+            pathList[pathList.length - 1] = this.fileName;
+            let newPath = pathList.join('/');
+            let data = {
+                old_path: this.path,
+                new_path: newPath
+            }
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('post', url);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = () => {
+                let response = JSON.parse(xhr.response);
+                console.log(response);
+                this.$emit('onRename');
+            }
+            xhr.send(JSON.stringify(data));
+        }
+    },
+    mounted() {
+        let dirs = this.path.split('/');
+        this.fileName = dirs[dirs.length - 1];
     },
     computed: {
-        fileName() {
-            let dirs = this.path.split('/');
-            return dirs[dirs.length - 1];
-        },
-        showInput() {
-            return this.show;
-        },
+        // fileName() {
+        //     return dirs[dirs.length - 1];
+        // }
     },
 };
 </script>

@@ -54,8 +54,8 @@
                 </div>
             </template>
             <template v-slot:default-body="prop">
-                <rename-field :show="prop.node.renameActive" :path="prop.node.path"
-                    @onClose="prop.node.renameActive = false"></rename-field>
+                <rename-field v-if="prop.node.renameActive" :path="prop.node.path" @onClose="prop.node.renameActive = false"
+                    @onRename="fileRenamed(prop.node)"></rename-field>
                 <new-file-field v-if="prop.node.newFileActive" :path="prop.node.path" @onCreate="fileCreated(prop.node)"
                     @onClose="prop.node.newFileActive = false"></new-file-field>
                 <new-folder-field v-if="prop.node.newFolderActive" :path="prop.node.path"
@@ -69,6 +69,7 @@
 import RenameField from "components/RenameField.vue";
 import NewFileField from "./NewFileField.vue";
 import NewFolderField from "./NewFolderField.vue";
+import { tabStore } from '../stores/global-store';
 export default {
     components: {
         RenameField,
@@ -84,13 +85,16 @@ export default {
                 folder: new URL("../assets/editor-icons/default_folder.svg", import.meta.url).href,
                 file: new URL("../assets/editor-icons/default_file.svg", import.meta.url).href
             },
-            treeModel: []
+            treeModel: [],
+            tabStore: tabStore()
         };
     },
     methods: {
         selectFile(target) {
             this.selected = target;
-            console.log(target);
+            let node = this.$refs.fileExplorerTree.getNodeByKey(target);
+            console.log("target: ", node);
+            this.tabStore.openTab(node);
         },
         collapseTree() {
             this.$refs.fileExplorerTree.collapseAll();
@@ -98,14 +102,26 @@ export default {
         renameNode(node) {
             this.$refs.fileExplorerTree.setExpanded(node.path, true);
             node.renameActive = true;
+            node.newFileActive = false;
+            node.newFolderActive = false;
+            this.newFileField = false;
+            this.newFolderField = false
         },
         createNewFileInNode(node) {
             this.$refs.fileExplorerTree.setExpanded(node.path, true);
             node.newFileActive = true;
+            node.renameActive = false;
+            node.newFolderActive = false;
+            this.newFileField = false;
+            this.newFolderField = false
         },
         createNewFolderInNode(node) {
             this.$refs.fileExplorerTree.setExpanded(node.path, true);
             node.newFolderActive = true;
+            node.newFileActive = false;
+            node.renameActive = false;
+            this.newFileField = false;
+            this.newFolderField = false
         },
         fetchTreeModel() {
             let url = "/api/list_files";
@@ -136,6 +152,10 @@ export default {
             else {
                 this.newFileField = false;
             }
+            this.fetchTreeModel();
+        },
+        fileRenamed(node) {
+            node.renameActive = false;
             this.fetchTreeModel();
         }
     },
