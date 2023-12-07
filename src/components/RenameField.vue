@@ -2,12 +2,7 @@
     <div class="fit q-ma-none z-top">
         <q-input v-if="showInput" dense outlined v-model="fileName">
             <template v-slot:append>
-                <q-btn
-                    dense
-                    flat
-                    icon="close"
-                    @click.stop="$emit('onClose')"
-                ></q-btn>
+                <q-btn dense flat icon="close" @click.stop="$emit('onClose')"></q-btn>
             </template>
         </q-input>
     </div>
@@ -16,8 +11,8 @@
 <script>
 export default {
     props: {
-        node: {
-            type: Object,
+        path: {
+            type: String,
             required: true,
         },
         show: {
@@ -30,7 +25,8 @@ export default {
     },
     computed: {
         fileName() {
-            return this.node.label;
+            let dirs = this.path.split('/');
+            return dirs[dirs.length - 1];
         },
         showInput() {
             return this.show;

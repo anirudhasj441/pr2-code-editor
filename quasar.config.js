@@ -88,6 +88,13 @@ module.exports = configure(function (/* ctx */) {
         // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
         devServer: {
             // https: true
+            proxy: {
+                '/api': {
+                    // target: 'http://chatapp_server.localhost',
+                    target: 'http://127.0.0.1:3000',
+                    rewrite: (path) => path.replace(/^\/api/, '')
+                },
+            },
             open: true // opens browser window automatically
         },
 
