@@ -37,7 +37,7 @@ export default {
             xhr.onload = () => {
                 let response = JSON.parse(xhr.response);
                 console.log(response);
-                this.$emit('onCreate')
+                this.$emit('onCreate', this.path === '' ? this.newFileName : filePath);
             }
             xhr.send(JSON.stringify(data))
         }

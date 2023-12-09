@@ -6,7 +6,8 @@
                 <q-tab v-for="tab in openTabs" v-bind:key="tab" :name="tab.path" class="q-px-sm">
                     <div class="flex items-center q-gutter-x-sm">
                         <div>{{ tab.label }}</div>
-                        <q-btn dense flat icon="close" size="sm"></q-btn>
+                        <q-btn dense flat icon="close" size="sm" @click.stop="closeTab(tab)"
+                            style="z-index: 999999;"></q-btn>
                     </div>
                 </q-tab>
             </q-tabs>
@@ -35,6 +36,12 @@ export default defineComponent({
             editorTab: 'main.js',
             pageStyleStore: pageStyleStore(),
             tabStore: tabStore()
+        }
+    },
+    methods: {
+        closeTab(tab) {
+            console.log("!!clicked")
+            this.tabStore.closeTab(tab);
         }
     },
     computed: {

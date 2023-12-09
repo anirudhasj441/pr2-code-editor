@@ -41,7 +41,7 @@ export default {
             xhr.onload = () => {
                 let response = JSON.parse(xhr.response);
                 console.log(response);
-                this.$emit('onRename');
+                this.$emit('onRename', this.path, newPath);
             }
             xhr.send(JSON.stringify(data));
         }
