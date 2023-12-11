@@ -1,15 +1,29 @@
 <template>
-    <div ref="editor" class="fit" @keydown="handleKeyDown"></div>
+    <div class="fit">
+        <div ref="editor" class="fit"></div>
+        <div class="action-buttons absolute-top-right flex justify-end z-top" style="bottom:
+        200% !important;">
+            <!-- <q-btn flat icon="share"></q-btn> -->
+            <q-btn flat icon="save" @click="save">
+                <q-tooltip>Save (Ctrl+S)</q-tooltip>
+            </q-btn>
+        </div>
+    </div>
     <!-- <div class="">{{ fileChanged }}</div> -->
+    <lock-pin-field :show="showPinInput" @onClose="showPinInput = false" @onValidate="onValidate"></lock-pin-field>
 </template>
 
 <script>
 import * as monaco from 'monaco-editor';
-import { editorStore } from 'stores/global-store';
+import { editorStore, pinStore } from 'stores/global-store';
+import LockPinField from './LockPinField.vue';
 // import { editor } from 'monaco-editor';
 
 
 export default {
+    components: {
+        LockPinField
+    },
     props: {
         path: {
             type: String,
@@ -21,10 +35,16 @@ export default {
             editorObj: null,
             editorText: 'Hello',
             editorStore: editorStore(),
+            pinStore: pinStore(),
+            pinValidateResolve: null
             // editorModel: null
         }
     },
     methods: {
+        onValidate(result) {
+            this.pinStore.toggleInputField(false);
+            this.pinValidateResolve(result);
+        },
         createEditor() {
             let editorObj = monaco.editor.create(this.$refs.editor, {
                 language: 'javascript',
@@ -80,7 +100,9 @@ export default {
                 py: 'python',
                 js: 'javascript',
                 html: 'html',
-                ts: 'typescript'
+                ts: 'typescript',
+                c: 'c',
+                cpp: 'cpp'
             }
             let ext = this.path.split('.')[1];
             let editorModel = monaco.editor.createModel('', extLanguageMap[ext]);
@@ -88,7 +110,15 @@ export default {
             // editorObj.setModel(editorModel);
             return editorModel;
         },
-        save() {
+        validatePin() {
+            return new Promise((resolve) => {
+                this.pinStore.toggleInputField(true);
+                this.pinValidateResolve = resolve;
+            })
+        },
+        async save() {
+            let validation = await this.validatePin();
+            if (!validation) return;
             let url = "/api/save_file";
             let data = {
                 path: this.path,
@@ -100,7 +130,7 @@ export default {
             xhr.onload = () => {
                 let response = JSON.parse(xhr.response);
                 this.editorText = this.editorModel.getValue();
-
+                console.log("save!!");
 
             }
             xhr.send(JSON.stringify(data));
@@ -116,12 +146,12 @@ export default {
         this.getFileContent();
 
         console.log(this.$q.platform);
-        document.addEventListener("keydown", function (e) {
-            if (e.key === 's' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
-                e.preventDefault();
-                // alert('captured');
-            }
-        }, false);
+        // document.addEventListener("keydown", function (e) {
+        //     if (e.key === 's' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+        //         e.preventDefault();
+        //         // alert('captured');
+        //     }
+        // }, false);
 
     },
     computed: {
@@ -142,6 +172,9 @@ export default {
                 return this.editorText !== this.editorModel.getValue();
             }
             return false;
+        },
+        showPinInput() {
+            return this.pinStore.getShowPinField;
         }
     }
 

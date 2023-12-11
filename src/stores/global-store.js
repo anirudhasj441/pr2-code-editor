@@ -61,7 +61,7 @@ export const tabStore = defineStore('tab', {
             if (!tabIsOpened(this.openTabs, tab)) {
                 this.openTabs.push(tab)
             }
-            this.activeTab = node;
+            this.activeTab = tab;
         },
         closeTab(tab) {
             const getTabIndex = (tab) => {
@@ -89,6 +89,25 @@ export const tabStore = defineStore('tab', {
                     this.activeTab = newTab;
                 }
             }
+        }
+    }
+})
+
+
+export const pinStore = defineStore('pin', {
+    state: () => ({
+        showPinField: false,
+        pin: 2606,
+    }),
+    getters: {
+        getShowPinField: (state) => (state.showPinField),
+    },
+    actions: {
+        toggleInputField(state) {
+            this.showPinField = state;
+        },
+        validate(aPin) {
+            return this.pin == aPin;
         }
     }
 })
