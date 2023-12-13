@@ -1,25 +1,26 @@
-import { defineStore } from 'pinia';
-import * as monaco from 'monaco-editor';
+import { defineStore } from "pinia";
+import * as monaco from "monaco-editor";
 
 const themeFiles = {
-    'monokai': new URL('../assets/editor-themes/monokai.json', import.meta.url).href
-}
+    monokai: new URL("../assets/editor-themes/monokai.json", import.meta.url)
+        .href,
+};
 
-export const pageStyleStore = defineStore('pageStyle', {
+export const pageStyleStore = defineStore("pageStyle", {
     state: () => ({
-        pageStyle: null
+        pageStyle: null,
     }),
     actions: {
         setStyle(offset) {
-            return { height: offset ? `calc(100svh - ${offset}px)` : '100svh' }
-        }
-    }
-})
+            return { height: offset ? `calc(100svh - ${offset}px)` : "100svh" };
+        },
+    },
+});
 
-export const editorStore = defineStore('editor', {
+export const editorStore = defineStore("editor", {
     state: () => ({
         editor: null,
-        theme: 'monokai',
+        theme: "monokai",
     }),
     actions: {
         async setTheme(theme) {
@@ -29,37 +30,36 @@ export const editorStore = defineStore('editor', {
             monaco.editor.defineTheme(theme, themeData);
             monaco.editor.setTheme(theme);
             this.theme = theme;
-        }
-    }
+        },
+    },
+});
 
-})
-
-export const tabStore = defineStore('tab', {
+export const tabStore = defineStore("tab", {
     state: () => ({
         openTabs: [],
-        activeTab: null
+        activeTab: null,
     }),
     getters: {
-        getOpenTabs: (state) => (state.openTabs),
-        getActiveTab: (state) => (state.activeTab)
+        getOpenTabs: (state) => state.openTabs,
+        getActiveTab: (state) => state.activeTab,
     },
     actions: {
         openTab(node) {
             let tab = {
                 path: node.path,
-                label: node.label
-            }
-            console.log("openTabs: ", this.openTabs)
+                label: node.label,
+            };
+            console.log("openTabs: ", this.openTabs);
             console.log("tab: ", tab);
             const tabIsOpened = (openTabs, tab) => {
                 for (let t of openTabs) {
                     if (t.path == tab.path) return true;
                 }
                 return false;
-            }
+            };
 
             if (!tabIsOpened(this.openTabs, tab)) {
-                this.openTabs.push(tab)
+                this.openTabs.push(tab);
             }
             this.activeTab = tab;
         },
@@ -68,39 +68,38 @@ export const tabStore = defineStore('tab', {
                 for (let t of this.openTabs) {
                     if (t.path == tab.path) return this.openTabs.indexOf(t);
                 }
-            }
+            };
             console.log("before: ", this.openTabs);
             this.openTabs.splice(getTabIndex(tab), 1);
             console.log("after: ", this.openTabs);
             if (this.openTabs.length < 1) return;
-            this.activeTab = this.openTabs[this.openTabs.length - 1]
+            this.activeTab = this.openTabs[this.openTabs.length - 1];
         },
         updateTab(oldPath, newPath) {
             for (let t of this.openTabs) {
                 if (t.path == oldPath) {
-                    console.log(t)
-                    let newPtahList = newPath.split('/');
+                    console.log(t);
+                    let newPtahList = newPath.split("/");
                     let newTab = {
                         path: newPath,
-                        label: newPtahList[newPtahList.length - 1]
-                    }
-                    console.log("newTab: ", newTab)
+                        label: newPtahList[newPtahList.length - 1],
+                    };
+                    console.log("newTab: ", newTab);
                     this.openTabs[this.openTabs.indexOf(t)] = newTab;
                     this.activeTab = newTab;
                 }
             }
-        }
-    }
-})
+        },
+    },
+});
 
-
-export const pinStore = defineStore('pin', {
+export const pinStore = defineStore("pin", {
     state: () => ({
         showPinField: false,
         pin: 2606,
     }),
     getters: {
-        getShowPinField: (state) => (state.showPinField),
+        getShowPinField: (state) => state.showPinField,
     },
     actions: {
         toggleInputField(state) {
@@ -108,6 +107,6 @@ export const pinStore = defineStore('pin', {
         },
         validate(aPin) {
             return this.pin == aPin;
-        }
-    }
-})
+        },
+    },
+});

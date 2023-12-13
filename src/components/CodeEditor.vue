@@ -12,9 +12,14 @@
         </div>
     </div>
     <!-- <div class="">{{ fileChanged }}</div> -->
-    <lock-pin-field
+    <!-- <lock-pin-field
         :show="showPinInput"
         @onClose="pinStore.toggleInputField(false)"
+        @onValidate="onValidate"
+    ></lock-pin-field> -->
+    <lock-pin-field
+        :show="showPinInput"
+        @onClose="showPinInput = false"
         @onValidate="onValidate"
     ></lock-pin-field>
 </template>
@@ -37,6 +42,7 @@ export default {
     },
     data() {
         return {
+            showPinInput: false,
             editorObj: null,
             editorText: "Hello",
             editorStore: editorStore(),
@@ -47,7 +53,9 @@ export default {
     },
     methods: {
         onValidate(result) {
-            this.pinStore.toggleInputField(false);
+            // this.pinStore.toggleInputField(false);
+            this.showPinInput = false;
+            if (!this.pinValidateResolve) return;
             this.pinValidateResolve(result);
         },
         createEditor() {
@@ -117,7 +125,8 @@ export default {
         },
         validatePin() {
             return new Promise((resolve) => {
-                this.pinStore.toggleInputField(true);
+                // this.pinStore.toggleInputField(true);
+                this.showPinInput = true;
                 this.pinValidateResolve = resolve;
             });
         },
@@ -135,6 +144,11 @@ export default {
             xhr.onload = () => {
                 let response = JSON.parse(xhr.response);
                 this.editorText = this.editorModel.getValue();
+                console.log(response.status);
+                if (response.status != 200) {
+                    console.log("File Not Present!!!");
+                    return;
+                }
                 console.log("save!!");
             };
             xhr.send(JSON.stringify(data));
@@ -174,9 +188,9 @@ export default {
             }
             return false;
         },
-        showPinInput() {
-            return this.pinStore.getShowPinField;
-        },
+        // showPinInput() {
+        //     return this.pinStore.getShowPinField;
+        // },
     },
 };
 </script>

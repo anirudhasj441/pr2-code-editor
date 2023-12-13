@@ -48,11 +48,17 @@ export default {
     methods: {
         validate() {
             this.$emit("onValidate", this.pinStore.validate(this.pin));
+            console.log("Validate called");
         },
     },
     computed: {
         showDialog() {
             return this.show;
+        },
+    },
+    watch: {
+        showDialog(value) {
+            this.pin = "";
         },
     },
 };
