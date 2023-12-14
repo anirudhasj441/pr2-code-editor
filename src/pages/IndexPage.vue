@@ -84,7 +84,7 @@ export default defineComponent({
             return this.setTabHeight();
         },
         hasQuery() {
-            return this.$route.query != {};
+            return Object.keys(this.$route.query).length > 0;
         }
     },
     watch: {

@@ -156,7 +156,8 @@ export default {
             console.log(data);
         },
         async shareFile() {
-            let url = new URL(`/?file=${this.path}`, import.meta.url).href;
+            console.log('meta URL:: ', window.location.origin);
+            let url = `${window.location.origin}/?file=${this.path}`;
             await navigator.clipboard.writeText(url);
             this.showShareNotification = true;
             setTimeout(() => {
