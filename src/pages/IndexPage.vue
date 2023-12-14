@@ -3,54 +3,21 @@
         <div class="fit flex bg-main">
             <div class="full-width" style="height: 36px">
                 <q-scroll-area class="fit">
-                    <q-tabs
-                        v-model="editorTab"
-                        dense
-                        class="text-white fit-feight"
-                        no-caps
-                        align="left"
-                        active-class="tab-active"
-                        indicator-color="none"
-                        breakpoint="0"
-                        :shrink="false"
-                    >
-                        <q-tab
-                            v-for="tab in openTabs"
-                            v-bind:key="tab"
-                            :name="tab.path"
-                            class="q-px-sm"
-                        >
-                            <div
-                                class="flex items-center q-gutter-x-sm no-wrap"
-                            >
+                    <q-tabs v-model="editorTab" dense class="text-white fit-feight" no-caps align="left"
+                        active-class="tab-active" indicator-color="none" breakpoint="0" :shrink="false">
+                        <q-tab v-for="tab in openTabs" v-bind:key="tab" :name="tab.path" class="q-px-sm">
+                            <div class="flex items-center q-gutter-x-sm no-wrap">
                                 <div>{{ tab.label }}</div>
-                                <q-btn
-                                    dense
-                                    flat
-                                    icon="close"
-                                    size="sm"
-                                    @click.stop="closeTab(tab)"
-                                    style="z-index: 999999"
-                                ></q-btn>
+                                <q-btn dense flat icon="close" size="sm" @click.stop="closeTab(tab)"
+                                    style="z-index: 999999"></q-btn>
                             </div>
                         </q-tab>
                     </q-tabs>
                 </q-scroll-area>
             </div>
             <div class="col-grow full-width">
-                <q-tab-panels
-                    v-model="editorTab"
-                    class="fit"
-                    :animated="false"
-                    :swipeable="false"
-                    :keep-alive="true"
-                >
-                    <q-tab-panel
-                        v-for="tab in openTabs"
-                        v-bind:key="tab"
-                        :name="tab.path"
-                        class="fit q-pa-none"
-                    >
+                <q-tab-panels v-model="editorTab" class="fit" :animated="false" :swipeable="false" :keep-alive="true">
+                    <q-tab-panel v-for="tab in openTabs" v-bind:key="tab" :name="tab.path" class="fit q-pa-none">
                         <code-editor :path="tab.path"></code-editor>
                     </q-tab-panel>
                 </q-tab-panels>
@@ -93,6 +60,18 @@ export default defineComponent({
     },
     mounted() {
         this.setTabHeight();
+        if (this.hasQuery) {
+            let filePath = this.$route.query.file;
+            let fileList = filePath.split('/');
+            let fileName = fileList[fileList.length - 1];
+            console.log(fileName)
+            let node = {
+                path: filePath,
+                label: fileName
+            }
+            this.tabStore.openTab(node);
+        }
+        console.log(this.$route.query.file);
     },
     computed: {
         openTabs() {
@@ -104,6 +83,9 @@ export default defineComponent({
         tabHeight() {
             return this.setTabHeight();
         },
+        hasQuery() {
+            return this.$route.query != {};
+        }
     },
     watch: {
         activeTab(value) {

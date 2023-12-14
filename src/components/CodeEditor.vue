@@ -1,13 +1,13 @@
 <template>
     <div class="fit">
         <div ref="editor" class="fit"></div>
-        <div
-            class="action-buttons absolute-top-right flex justify-end z-top"
-            style="bottom: 200% !important"
-        >
+        <div class="action-buttons absolute-top-right flex justify-end z-top" style="bottom: 200% !important">
             <!-- <q-btn flat icon="share"></q-btn> -->
             <q-btn flat icon="save" @click="save">
                 <q-tooltip>Save (Ctrl+S)</q-tooltip>
+            </q-btn>
+            <q-btn flat icon="share" @click="shareFile">
+                <q-tooltip>Share File</q-tooltip>
             </q-btn>
         </div>
     </div>
@@ -17,11 +17,11 @@
         @onClose="pinStore.toggleInputField(false)"
         @onValidate="onValidate"
     ></lock-pin-field> -->
-    <lock-pin-field
-        :show="showPinInput"
-        @onClose="showPinInput = false"
-        @onValidate="onValidate"
-    ></lock-pin-field>
+    <lock-pin-field :show="showPinInput" @onClose="showPinInput = false" @onValidate="onValidate"></lock-pin-field>
+    <q-chip v-if="showShareNotification" icon="sym_o_inventory" size="lg" class="absolute-bottom"
+        style="width: max-content; left: 50%; transform: translateX(-50%);">Copy to clipboard</q-chip>
+    <!-- <q-dialog v-model="showShareNotification" >
+    </q-dialog> -->
 </template>
 
 <script>
@@ -48,6 +48,7 @@ export default {
             editorStore: editorStore(),
             pinStore: pinStore(),
             pinValidateResolve: null,
+            showShareNotification: false,
             // editorModel: null
         };
     },
@@ -154,6 +155,16 @@ export default {
             xhr.send(JSON.stringify(data));
             console.log(data);
         },
+        async shareFile() {
+            let url = new URL(`/?file=${this.path}`, import.meta.url).href;
+            await navigator.clipboard.writeText(url);
+            this.showShareNotification = true;
+            setTimeout(() => {
+                this.showShareNotification = false;
+            }, 2000)
+            console.log('url: ', url);
+        },
+
     },
     mounted() {
         this.editorObj = this.createEditor();
