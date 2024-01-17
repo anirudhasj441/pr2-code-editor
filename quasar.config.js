@@ -92,7 +92,7 @@ module.exports = configure(function (/* ctx */) {
             proxy: {
                 '/api': {
                     // target: 'http://chatapp_server.localhost',
-                    target: 'http://127.0.0.1:3000',
+                    target: process.env.BACKEND_HOST ? `http://${process.env.BACKEND_HOST}:3000` : 'http://127.0.0.1:3000',
                     rewrite: (path) => path.replace(/^\/api/, '')
                 },
             },

@@ -1,0 +1,33 @@
+services:
+    backend:
+        image: anirudhasj441/devil-editor-backend
+        container_name: devil-editor-backend
+        networks:
+            - devil-editor-network
+        volumes:
+            - data:/app/public/
+
+        ports:
+            - "3000:3000"
+
+    frontend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: devil-editor
+        environment:
+            - BACKEND_HOST=devil-editor-backend
+        networks:
+            - devil-editor-network
+        ports:
+            - "8008:80"
+
+        depends_on:
+            - backend
+
+volumes:
+    data:
+
+networks:
+    devil-editor-network:
+        driver: bridge
