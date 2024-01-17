@@ -1,13 +1,22 @@
 <template>
     <div class="fit">
         <div ref="editor" class="fit"></div>
-        <div class="action-buttons absolute-top-right flex justify-end z-top" style="bottom: 200% !important">
+        <div
+            class="action-buttons absolute-top-right flex justify-end z-top"
+            style="bottom: 200% !important"
+        >
             <!-- <q-btn flat icon="share"></q-btn> -->
             <q-btn flat icon="save" @click="save">
                 <q-tooltip>Save (Ctrl+S)</q-tooltip>
             </q-btn>
             <q-btn flat icon="share" @click="shareFile">
                 <q-tooltip>Share File</q-tooltip>
+            </q-btn>
+            <q-btn flat :icon="copyBtnIcon" @click="copyFileContent">
+                <q-tooltip>Copy File Content</q-tooltip>
+            </q-btn>
+            <q-btn flat icon="sym_o_play_arrow" @click="goToCompiler">
+                <q-tooltip>go to compiler</q-tooltip>
             </q-btn>
         </div>
     </div>
@@ -17,9 +26,19 @@
         @onClose="pinStore.toggleInputField(false)"
         @onValidate="onValidate"
     ></lock-pin-field> -->
-    <lock-pin-field :show="showPinInput" @onClose="showPinInput = false" @onValidate="onValidate"></lock-pin-field>
-    <q-chip v-if="showShareNotification" icon="sym_o_inventory" size="lg" class="absolute-bottom"
-        style="width: max-content; left: 50%; transform: translateX(-50%);">Copy to clipboard</q-chip>
+    <lock-pin-field
+        :show="showPinInput"
+        @onClose="showPinInput = false"
+        @onValidate="onValidate"
+    ></lock-pin-field>
+    <q-chip
+        v-if="showShareNotification"
+        icon="sym_o_inventory"
+        size="lg"
+        class="absolute-bottom"
+        style="width: max-content; left: 50%; transform: translateX(-50%)"
+        >Copy to clipboard</q-chip
+    >
     <!-- <q-dialog v-model="showShareNotification" >
     </q-dialog> -->
 </template>
@@ -49,6 +68,7 @@ export default {
             pinStore: pinStore(),
             pinValidateResolve: null,
             showShareNotification: false,
+            copyBtnIcon: "sym_o_content_paste",
             // editorModel: null
         };
     },
@@ -156,16 +176,32 @@ export default {
             console.log(data);
         },
         async shareFile() {
-            console.log('meta URL:: ', window.location.origin);
+            console.log("meta URL:: ", window.location.origin);
             let url = `${window.location.origin}/?file=${this.path}`;
             await navigator.clipboard.writeText(url);
             this.showShareNotification = true;
             setTimeout(() => {
                 this.showShareNotification = false;
-            }, 2000)
-            console.log('url: ', url);
+            }, 2000);
+            console.log("url: ", url);
         },
+        copyFileContent() {
+            console.log(this.editorModel.getValue());
+            navigator.clipboard
+                .writeText(this.editorModel.getValue())
+                .then(() => {
+                    this.copyBtnIcon = "sym_o_inventory";
+                });
+        },
+        goToCompiler() {
+            let compiler_url =
+                "https://www.programiz.com/c-programming/online-compiler/";
 
+            let a = document.createElement("a");
+            a.href = compiler_url;
+            a.target = "_blank";
+            a.click();
+        },
     },
     mounted() {
         this.editorObj = this.createEditor();
